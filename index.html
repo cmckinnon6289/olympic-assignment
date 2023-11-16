@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a Score</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css">
+    <link rel="stylesheet" href="add-style.css">
+    <script src="stats.js"></script>
+    <script type="module" src="placeholder.js"></script>
+</head>
+<body>
+    <div class="section">
+        <h1 class="title">Olympic Basketball</h1>
+        <p>Hello.</p>
+        <div class="modal" id="score-add">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Add new score</p>
+                </header>
+                <section class="modal-card-body">
+                    <form onsubmit="submitEntry(document.querySelector('#country-one').value, document.querySelector('#country-two').value, document.querySelector('#score-one').value, document.querySelector('#score-two').value, document.querySelector('#date').value)">
+                        <div class="columns">
+                            <div class="column is-three-quarters">
+                                <div class="field">
+                                    <label class="label" for="country-one">Country Code 1 (ISO-3166-1 Alpha-3)</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input country-input" type="text" id="country-one" maxlength="3" minlength="3" placeholder="South Georgia and the South Sandwich Islands" required>
+                                        <span class="icon is-small is-left"><i class="fa-solid fa-flag"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label" for="score-one">Score</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="number" id="score-one" placeholder="50" required>
+                                        <span class="icon is-small is-left"><i class="fa-solid fa-basketball"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column is-three-quarters">
+                                <div class="field">
+                                    <label class="label" for="country-two">Country Code 2 (ISO-3166-1 Alpha-3)</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input country-input" type="text" id="country-two" maxlength="3" minlength="3" placeholder="South Georgia and the South Sandwich Islands" required>
+                                        <span class="icon is-small is-left"><i class="fa-solid fa-flag"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label" for="score-two">Score</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="number" id="score-two" placeholder="50" required>
+                                        <span class="icon is-small is-left"><i class="fa-solid fa-basketball"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="date">Date of game</label>
+                            <div class="control">
+                                <input class="input" type="date" id="date" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <label class="checkbox">
+                                <input type="checkbox" id="certified" required>
+                                I certify this to be a true and accurate representation of the game standings.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <input class="button is-link" type="submit" value="Submit">
+                            </div>
+                        </div>
+                    </form>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button" onclick="modalHandle('score-add')">Cancel</button>
+                </footer>
+            </div>
+        </div>
+    </div> 
+    <section class="section">
+        <table id="scores-table" class="table is-hoverable">
+            <thead>
+                <tr>
+                    <th column="0">Country</th>
+                    <th column="1">Wins</th>
+                    <th column="2">Losses</th>
+                    <th column="3"><abbr title="Percentage of games won">PCT</abbr></th>
+                </tr>
+            </thead>
+            <tbody id="scores-data">
+
+            </tbody>
+        </table>
+    </section>
+    <section class="section">
+        <button class="button is-info" onclick="modalHandle('score-add')">Add score</button>
+        <button class="button is-info" onclick="window.location.href = '/search.html'">Search team games</button>
+        <button onclick="clearLocalStorage()" class="button is-danger">Clear local storage</button>
+    </section>
+</body>
+</html>
