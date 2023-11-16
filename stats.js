@@ -118,7 +118,6 @@ function getAllGames(country) {
            games.push(game); 
         }
     }
-    console.log(games);
     return games;
 }
 
@@ -129,7 +128,6 @@ function displayGames(country) {
 
 document.addEventListener("DOMContentLoaded", (event) => { displayStats(); });
 document.addEventListener("submit", (event) => {
-    console.log(event);
     if (event.target == document.querySelector("#team-search"))
         event.preventDefault();
 })
