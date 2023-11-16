@@ -122,4 +122,14 @@ function getAllGames(country) {
     return games;
 }
 
+function displayGames(country) {
+    let games = getAllGames(country.toUpperCase()) ? getAllGames(country.toUpperCase()) : "Nothing found.";
+    console.log(games);
+}
+
 document.addEventListener("DOMContentLoaded", (event) => { displayStats(); });
+document.addEventListener("submit", (event) => {
+    console.log(event);
+    if (event.target == document.querySelector("#team-search"))
+        event.preventDefault();
+})
