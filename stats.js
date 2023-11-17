@@ -122,8 +122,21 @@ function getAllGames(country) {
 }
 
 function displayGames(country) {
-    let games = getAllGames(country.toUpperCase()) ? getAllGames(country.toUpperCase()) : "Nothing found.";
+    let games = getAllGames(country.toUpperCase()).length > 0 ? getAllGames(country.toUpperCase()) : "Nothing found.";
+    let insert = document.querySelector("#found-games");
+    insert.innerHTML = "";
     console.log(games);
+    let i = 1;
+    if (games instanceof Array) {
+        for (const game of games) {
+            insert.innerHTML += `<div class='card'><div class='card-content'><div class='content'><b class='title is-4'>Game ${i}</b><br><p>${game.home} vs ${game.away}</p><div class='columns'><div class='column is-one-third'><b>${game.home} score</b><br><p>${game.homeScore}</p></div><div class='column is-one-third'><b>${game.away} score</b><br><p>${game.awayScore}</p></div><div class='column is-one-third'><b>Date of game</b><br><p>${game.date}</p></div>`
+            i++;
+        }
+    } else {
+        let notice = document.createElement("b");
+        notice.textContent = games;
+        insert.appendChild(notice);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", (event) => { displayStats(); });
