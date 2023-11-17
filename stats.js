@@ -111,18 +111,46 @@ function displayStats() {
     }
 }
 
-function getAllGames(country) {
+function getAllGames(country,dates,searchBy) {
+    // searchby values = country, dates, both
     let games = [];
-    for (const game of gamesList) {
-        if (country === game.home || country == game.away) {
-           games.push(game); 
+    if (searchBy === "country" || searchBy == "both") {
+        for (const game of gamesList) {
+            if (country === game.home || country == game.away) {
+            games.push(game); 
+            }
         }
+    } else if (searchBy === "dates") {
+        let range = parseDates(dates[0], dates[dates.length-1]);
+        for (const game of gamesList) {
+            if (range.includes(game.date) || country == game.away) {
+            games.push(game); 
+            }
+        }
+    }
+    if (searchBy === "both") {
+        let range = parseDates(dates[0], dates[dates.length-1]);
+        // write
     }
     return games;
 }
 
-function displayGames(country) {
-    let games = getAllGames(country.toUpperCase()).length > 0 ? getAllGames(country.toUpperCase()) : "Nothing found.";
+function getDates(startDate, endDate) { // this function written in part by ChatGPT using the prompt "how to get an array of dates between two given dates in javascript"
+    let range = [];
+    let currentDate = new Date(startDate);
+  
+    while (currentDate <= endDate) {
+        range.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // TO DO: turn dates into formatted strings
+    return range;
+}
+
+function displayGames(country,dateRange,searchSelector) {
+    console.log(search);
+    let games = getAllGames(country.toUpperCase(),dateRange,searchSelector).length > 0 ? getAllGames(country.toUpperCase()) : "Nothing found.";
     let insert = document.querySelector("#found-games");
     insert.innerHTML = "";
     console.log(games);
@@ -141,6 +169,8 @@ function displayGames(country) {
 
 document.addEventListener("DOMContentLoaded", (event) => { displayStats(); });
 document.addEventListener("submit", (event) => {
-    if (event.target == document.querySelector("#team-search"))
+    if (event.target == document.querySelector("#team-search")) {
         event.preventDefault();
+        document.querySelector("#team-search").reset()
+    }
 })
