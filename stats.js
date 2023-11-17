@@ -116,6 +116,7 @@ function getAllGames(country,dates,searchBy) {
     let games = [];
     if (searchBy === "country" || searchBy == "both") {
         for (const game of gamesList) {
+            console.log(game.date);
             if (country === game.home || country == game.away) {
             games.push(game); 
             }
@@ -123,46 +124,63 @@ function getAllGames(country,dates,searchBy) {
     } else if (searchBy === "dates") {
         let range = parseDates(dates[0], dates[dates.length-1]);
         for (const game of gamesList) {
-            if (range.includes(game.date) || country == game.away) {
+            if (range.includes(game.date)) {
             games.push(game); 
             }
         }
     }
     if (searchBy === "both") {
         let range = parseDates(dates[0], dates[dates.length-1]);
-        // write
+        for (let i = 0; i < games.length; i++) {
+            if (!range.includes(games[i].date)){
+                console.log(`range: ${range}. game date: ${games[i].date}.`)
+                games.splice(i,1);
+            }
+        }
     }
     return games;
 }
 
-function getDates(startDate, endDate) { // this function written in part by ChatGPT using the prompt "how to get an array of dates between two given dates in javascript"
+function parseDates(startDate, endDate) { // this function written in part by ChatGPT using the prompt "how to get an array of dates between two given dates in javascript"
     let range = [];
     let currentDate = new Date(startDate);
   
-    while (currentDate <= endDate) {
+    while (currentDate <= new Date(endDate)) {
         range.push(new Date(currentDate));
         currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    // TO DO: turn dates into formatted strings
+    for (let i = 0; i<range.length; i++) { // this loop written by me
+        range[i] = `${range[i].getFullYear()}-${range[i].getMonth()}-${range[i].getDate()}`
+    }
+
     return range;
 }
 
 function displayGames(country,dateRange,searchSelector) {
-    console.log(search);
-    let games = getAllGames(country.toUpperCase(),dateRange,searchSelector).length > 0 ? getAllGames(country.toUpperCase()) : "Nothing found.";
+    let valid = true;
     let insert = document.querySelector("#found-games");
-    insert.innerHTML = "";
-    console.log(games);
-    let i = 1;
-    if (games instanceof Array) {
-        for (const game of games) {
-            insert.innerHTML += `<div class='card'><div class='card-content'><div class='content'><b class='title is-4'>Game ${i}</b><br><p>${game.home} vs ${game.away}</p><div class='columns'><div class='column is-one-third'><b>${game.home} score</b><br><p>${game.homeScore}</p></div><div class='column is-one-third'><b>${game.away} score</b><br><p>${game.awayScore}</p></div><div class='column is-one-third'><b>Date of game</b><br><p>${game.date}</p></div>`
-            i++;
+    if (searchSelector === "dates" || searchSelector === "both") {
+        valid = new Date(dateRange[0]) < new Date(dateRange[dateRange.length-1]);
+    }
+    if (valid) {
+        let games = getAllGames(country.toUpperCase(),dateRange,searchSelector).length > 0 ? getAllGames(country.toUpperCase(),dateRange,searchSelector) : "Nothing found.";
+        insert.innerHTML = "";
+        console.log(games);
+        let i = 1;
+        if (games instanceof Array) {
+            for (const game of games) {
+                insert.innerHTML += `<div class='card'><div class='card-content'><div class='content'><b class='title is-4'>Game ${i}</b><br><p>${game.home} vs ${game.away}</p><div class='columns'><div class='column is-one-third'><b>${game.home} score</b><br><p>${game.homeScore}</p></div><div class='column is-one-third'><b>${game.away} score</b><br><p>${game.awayScore}</p></div><div class='column is-one-third'><b>Date of game</b><br><p>${game.date}</p></div>`
+                i++;
+            }
+        } else {
+            let notice = document.createElement("b");
+            notice.textContent = games;
+            insert.appendChild(notice);
         }
     } else {
         let notice = document.createElement("b");
-        notice.textContent = games;
+        notice.textContent = "Please amend your date range and try again.";
         insert.appendChild(notice);
     }
 }
@@ -172,5 +190,6 @@ document.addEventListener("submit", (event) => {
     if (event.target == document.querySelector("#team-search")) {
         event.preventDefault();
         document.querySelector("#team-search").reset()
+        console.log(event);
     }
 })
