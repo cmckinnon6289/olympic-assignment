@@ -16,6 +16,10 @@ function clearLocalStorage() {
     }
 }
 
+function getCountryData(country) {
+    return participants.find((country) => country.name === country);
+}
+
 function submitEntry(h,a,hs,as,d) {
     console.log("REACHED");
     const home = h.toUpperCase();
@@ -137,6 +141,15 @@ function sortTeamTable(stat,order) {
     }
 }
 
+/**
+ * Returns all matching games given search parameters.
+ * 
+ * @param {String} country - The country whose games are being searched.
+ * @param {Array} dates - Start and end dates to get a range from (Date objects).
+ * @param {String} searchBy - What to use from the parameters (ie: country, dates, or both).
+ * 
+ * @returns an {Array} of game objects.
+ */
 function getAllGames(country,dates,searchBy) {
     // searchby values = country, dates, both
     let games = [];
