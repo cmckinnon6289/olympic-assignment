@@ -45,6 +45,7 @@ function trackParticipation(game) {
             name: game.home,
             W: 0,
             L: 0,
+            PCT: 0,
             counter: 0,
             homeGames: {
 
@@ -61,6 +62,7 @@ function trackParticipation(game) {
             counter: 0,
             W: 0,
             L: 0,
+            PCT: 0,
             homeGames: {
 
             },
@@ -82,6 +84,7 @@ function trackParticipation(game) {
             team.counter += 1;
             game.homeScore > game.awayScore ? team.L += 1 : team.W += 1;
         }
+        team.PCT = isFinite(team.W/(team.W+team.L)) ? team.W/(team.W+team.L)*100 : 100
     }
     localStorage.setItem("teamdata", JSON.stringify(participants))
 }
@@ -91,23 +94,46 @@ function displayStats() {
         let tbody = document.querySelector("#scores-data")
 
         let teamRow = document.createElement("tr");
-        let nameDOM = document.createElement("td");
+        let nameParentDOM = document.createElement("td");
+        let nameDOM = document.createElement("a");
         let WDOM = document.createElement("td");
         let LDOM = document.createElement("td");
         let PCTDOM = document.createElement("td");
+
+        nameParentDOM.appendChild(nameDOM)
+        //AIHIGADHGHIADHGIAHIGIADHGIADHIGHADIGHIADHGIHAIGHIADGHIADGHADIG
 
         nameDOM.textContent = country.name;
         let W = country.W
         let L = country.L
         WDOM.textContent = W;
         LDOM.textContent = L;
-        PCTDOM.textContent = isFinite(W/(W+L)) ? W/(W+L)*100 : 100;
+        PCTDOM.textContent = country.PCT;
 
         tbody.appendChild(teamRow);
-        teamRow.appendChild(nameDOM);
+        teamRow.appendChild(nameParentDOM);
         teamRow.appendChild(WDOM);
         teamRow.appendChild(LDOM);
         teamRow.appendChild(PCTDOM);
+    }
+}
+
+function sortCall(elem) {
+    let order = elem.getAttribute("order") === "na" ? "highest" : elem.getAttribute("order");
+    let stat = elem.getAttribute("val");
+    sortTeamTable(stat,order); 
+}
+
+function sortTeamTable(stat,order) {
+    let stats = ["country","wins","losses","pct"]
+    let orders = ["highest","lowest"]
+    let sortBy = stats.includes(stat.toLowerCase()) ? stat : "pct"
+    let atTop = orders.includes(order.toLowerCase()) ? order : "highest"
+    
+    if (atTop === "lowest") {
+        participants.sort((a,b) => b[sortBy] > a[sortBy])
+    } else {
+        participants.sort((a,b) => a[sortBy] > b[sortBy])
     }
 }
 
@@ -160,8 +186,12 @@ function parseDates(startDate, endDate) { // this function written in part by Ch
 function displayGames(country,dateRange,searchSelector) {
     let valid = true;
     let insert = document.querySelector("#found-games");
-    if (searchSelector === "dates" || searchSelector === "both") {
+    if (searchSelector === "dates") {
         valid = new Date(dateRange[0]) < new Date(dateRange[dateRange.length-1]);
+    } else if (searchSelector === "country") {
+        valid = country != null;
+    } else if (searchSelector === "both") {
+        valid = new Date(dateRange[0]) < new Date(dateRange[dateRange.length-1]) && country != null;
     }
     if (valid) {
         let games = getAllGames(country.toUpperCase(),dateRange,searchSelector).length > 0 ? getAllGames(country.toUpperCase(),dateRange,searchSelector) : "Nothing found.";
@@ -180,7 +210,7 @@ function displayGames(country,dateRange,searchSelector) {
         }
     } else {
         let notice = document.createElement("b");
-        notice.textContent = "Please amend your date range and try again.";
+        notice.textContent = " Please amend your search and try again.";
         insert.appendChild(notice);
     }
 }

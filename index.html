@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css">
     <link rel="stylesheet" href="add-style.css">
     <link rel="icon" type="image/x-icon" href="/assets/basketball-solid.svg">
-    <script src="stats.js"></script>
-    <script type="module" src="placeholder.js"></script>
+    <script src="/js/script.js"></script>
+    <script type="module" src="/js/placeholder.js"></script>
 </head>
 <body>
     <div class="section">
@@ -111,7 +111,7 @@
                         <div class="field">
                             <label class="label" for="country-one">Country Code (ISO-3166-1 Alpha-3)</label>
                             <div class="control has-icons-left">
-                                <input class="input country-input" type="text" id="country-game-search" maxlength="3" minlength="3" placeholder="South Georgia and the South Sandwich Islands" required>
+                                <input class="input country-input" type="text" id="country-game-search" maxlength="3" minlength="3" placeholder="South Georgia and the South Sandwich Islands">
                                 <span class="icon is-small is-left"><i class="fa-solid fa-flag"></i></span>
                             </div>
                         </div>
@@ -119,13 +119,13 @@
                             <div class="column is-one-half">
                                 <label class="label" for="date-start">Start of date range</label>
                                 <div class="control">
-                                    <input class="input" type="date" id="date-start" placeholder="yyyy-mm-dd" required>
+                                    <input class="input" type="date" id="date-start" placeholder="yyyy-mm-dd">
                                 </div>
                             </div>
                             <div class="column is-one-half">
                                 <label class="label" for="date-end">End of date range</label>
                                 <div class="control">
-                                    <input class="input" type="date" id="date-end" required>
+                                    <input class="input" type="date" id="date-end">
                                 </div>
                             </div>
                         </div>
@@ -150,10 +150,10 @@
         <table id="scores-table" class="table is-hoverable">
             <thead>
                 <tr>
-                    <th column="0">Country</th>
-                    <th column="1">Wins</th>
-                    <th column="2">Losses</th>
-                    <th column="3"><abbr title="Percentage of games won">PCT</abbr></th>
+                    <th id="0" order="na" val="country"><a onclick='sortCall(document.querySelector("#0"))'>Country</a></th>
+                    <th id="1" order="na" val="wins"><a onclick='sortCall(document.querySelector("#1"))'>Wins</a></th>
+                    <th id="2" order="na" val="losses"><a onclick='sortCall(document.querySelector("#2"))'>Losses</a></th>
+                    <th id="3" order="highest" val="pct"><a onclick='sortCall(document.querySelector("#3"))'><abbr title="Percentage of games won">PCT</abbr></a></th>
                 </tr>
             </thead>
             <tbody id="scores-data">
@@ -162,7 +162,7 @@
         </table>
     </section>
     <section class="section">
-        <button class="button is-info" onclick="modalHandle('score-add')">Add score</button>
+        <button class="button is-success black" onclick="modalHandle('score-add')">Add score</button>
         <button class="button is-info" onclick="modalHandle('search-games')">Search team games</button>
         <button onclick="clearLocalStorage()" class="button is-danger">Clear local storage</button>
     </section>
