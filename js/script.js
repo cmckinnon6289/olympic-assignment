@@ -16,14 +16,16 @@ function clearLocalStorage() {
     }
 }
 
-function Country(nameO, W, L, PCT, counter, homeGames, awayGames) {
-    this.name = nameO;
-    this.W = W ? W : 0;
-    this.L = L ? L : 0;
-    this.PCT = PCT ? PCT : 0;
-    this.counter = counter ? counter : 0;
-    this.homeGames = homeGames instanceof Object ? homeGames : {};
-    this.awayGames = awayGames instanceof Object ? awayGames : {};
+class Country {
+    constructor(nameO, W, L, PCT, counter, homeGames, awayGames) {
+        this.name = nameO;
+        this.W = W ? W : 0;
+        this.L = L ? L : 0;
+        this.PCT = PCT ? PCT : 0;
+        this.counter = counter ? counter : 0;
+        this.homeGames = homeGames instanceof Object ? homeGames : {};
+        this.awayGames = awayGames instanceof Object ? awayGames : {};
+    }
 }
 
 class Game { 
@@ -122,7 +124,7 @@ function displayStats() {
 function sortCall(elem) {
     let order = elem.getAttribute("order") === "na" ? "highest" : elem.getAttribute("order");
     let stat = elem.getAttribute("val");
-    participants = sortTeamTable(stat,order);
+    sortTeamTable(stat,order);
     displayStats();
     elem.setAttribute("order", order === "highest" ? "lowest" : "highest")
 }
@@ -135,45 +137,13 @@ function sortTeamTable(stat,order) {
     
     if (atTop === "lowest") {
         console.log("lowest")
-        let newArr = []
-        let bottom = -1;
-        for (i = 0; i < participants.length; i++) {
-            let p1 = participants[i][sortBy];
-            let p2 = participants[i+1] ? participants[i+1][sortBy] : -1;
-            if (p1 < p2) {
-                newArr.push(participants[i])
-                if (bottom === -1 || p2 > bottom[sortBy]) bottom = participants[i+1];
-            }
-            else if (participants[i+1] instanceof Object) {
-                newArr.push(participants[i])
-                if (bottom === -1 || p1 > bottom[sortBy]) bottom = participants[i];
-            }
-        }
-        if (bottom instanceof Object) {
-            newArr.push(bottom);
-            console.log("added")
-        }
-        return newArr;
+        if (typeof participants[0][sortBy] === "number") {
+            participants.sort((a,b) => a[sortBy] - b[sortBy])
+        } else participants.sort((a,b) => a[sortBy] > b[sortBy])
     } else {
-        let newArr = []
-        let bottom = -1;
-        for (i = 0; i < participants.length; i++) {
-            let p1 = participants[i][sortBy];
-            let p2 = participants[i+1] ? participants[i+1][sortBy] : -1;
-            if (p1 > p2) {
-                newArr.push(participants[i])
-                if (bottom === -1 || p2 < bottom[sortBy]) bottom = participants[i+1];
-            }
-            else if (participants[i+1] instanceof Object) {
-                newArr.push(participants[i])
-                if (bottom === -1 || p1 < bottom[sortBy]) bottom = participants[i];
-            }
-        }
-        if (bottom instanceof Object) {
-            newArr.push(bottom);
-            console.log("added")
-        }
-        return newArr;
+        if (typeof participants[0][sortBy] === "number") {
+            participants.sort((a,b) => b[sortBy] - a[sortBy])
+        } else participants.sort((a,b) => b[sortBy] > a[sortBy])
     }
 }
 
