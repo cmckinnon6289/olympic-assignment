@@ -16,6 +16,26 @@ function clearLocalStorage() {
     }
 }
 
+function Country(nameO, W, L, PCT, counter, homeGames, awayGames) {
+    this.name = nameO;
+    this.W = W ? W : 0;
+    this.L = L ? L : 0;
+    this.PCT = PCT ? PCT : 0;
+    this.counter = counter ? counter : 0;
+    this.homeGames = homeGames instanceof Object ? homeGames : {};
+    this.awayGames = awayGames instanceof Object ? awayGames : {};
+}
+
+class Game { 
+    constructor(date,home,away,homeScore,awayScore) {
+        this.date = date;
+        this.home = home;
+        this.away = away;
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
+    }
+}
+
 function getCountryData(country) {
     return participants.find((country) => country.name === country);
 }
@@ -45,35 +65,11 @@ function newGame(home, away, homeScore, awayScore, date) {
 
 function trackParticipation(game) {
     if (!participants.find((team) => team.name === game.home)) {
-        const homeObj = {
-            name: game.home,
-            W: 0,
-            L: 0,
-            PCT: 0,
-            counter: 0,
-            homeGames: {
-
-            },
-            awayGames: {
-
-            }
-        }
+        const homeObj = new Country(game.home);
         participants.push(homeObj);
     }
     if (!participants.find((team) => team.name === game.away)) {
-        const awayObj = {
-            name: game.away,
-            counter: 0,
-            W: 0,
-            L: 0,
-            PCT: 0,
-            homeGames: {
-
-            },
-            awayGames: {
-
-            }
-        }
+        const awayObj = new Country(game.away);
         participants.push(awayObj);
     }
     for (const team of participants) {
@@ -94,9 +90,9 @@ function trackParticipation(game) {
 }
 
 function displayStats() {
+    let tbody = document.querySelector("#scores-data")
+    tbody.innerHTML = '';
     for (const country of participants) {
-        let tbody = document.querySelector("#scores-data")
-
         let teamRow = document.createElement("tr");
         let nameParentDOM = document.createElement("td");
         let nameDOM = document.createElement("a");
@@ -119,26 +115,70 @@ function displayStats() {
         teamRow.appendChild(WDOM);
         teamRow.appendChild(LDOM);
         teamRow.appendChild(PCTDOM);
+        teamRow.setAttribute("id",country.name);
     }
 }
 
 function sortCall(elem) {
     let order = elem.getAttribute("order") === "na" ? "highest" : elem.getAttribute("order");
     let stat = elem.getAttribute("val");
-    sortTeamTable(stat,order); 
+    participants = sortTeamTable(stat,order);
+    displayStats();
+    elem.setAttribute("order", order === "highest" ? "lowest" : "highest")
 }
 
 function sortTeamTable(stat,order) {
-    let stats = ["country","wins","losses","pct"]
+    let stats = ["country","W","L","PCT"]
     let orders = ["highest","lowest"]
-    let sortBy = stats.includes(stat.toLowerCase()) ? stat : "pct"
+    let sortBy = stats.includes(stat.toLowerCase()) ? stat : "PCT"
     let atTop = orders.includes(order.toLowerCase()) ? order : "highest"
     
     if (atTop === "lowest") {
-        participants.sort((a,b) => b[sortBy] > a[sortBy])
+        console.log("lowest")
+        let newArr = []
+        let bottom = -1;
+        for (i = 0; i < participants.length; i++) {
+            let p1 = participants[i][sortBy];
+            let p2 = participants[i+1] ? participants[i+1][sortBy] : -1;
+            if (p1 < p2) {
+                newArr.push(participants[i])
+                if (bottom === -1 || p2 > bottom[sortBy]) bottom = participants[i+1];
+            }
+            else if (participants[i+1] instanceof Object) {
+                newArr.push(participants[i])
+                if (bottom === -1 || p1 > bottom[sortBy]) bottom = participants[i];
+            }
+        }
+        if (bottom instanceof Object) {
+            newArr.push(bottom);
+            console.log("added")
+        }
+        return newArr;
     } else {
-        participants.sort((a,b) => a[sortBy] > b[sortBy])
+        let newArr = []
+        let bottom = -1;
+        for (i = 0; i < participants.length; i++) {
+            let p1 = participants[i][sortBy];
+            let p2 = participants[i+1] ? participants[i+1][sortBy] : -1;
+            if (p1 > p2) {
+                newArr.push(participants[i])
+                if (bottom === -1 || p2 < bottom[sortBy]) bottom = participants[i+1];
+            }
+            else if (participants[i+1] instanceof Object) {
+                newArr.push(participants[i])
+                if (bottom === -1 || p1 < bottom[sortBy]) bottom = participants[i];
+            }
+        }
+        if (bottom instanceof Object) {
+            newArr.push(bottom);
+            console.log("added")
+        }
+        return newArr;
     }
+}
+
+function dupeCheck(arr) {
+
 }
 
 /**
@@ -228,7 +268,10 @@ function displayGames(country,dateRange,searchSelector) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", (event) => { displayStats(); });
+document.addEventListener("DOMContentLoaded", (event) => { 
+    sortCall(document.querySelector("#three"))
+});
+
 document.addEventListener("submit", (event) => {
     if (event.target == document.querySelector("#team-search")) {
         event.preventDefault();
