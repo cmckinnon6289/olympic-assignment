@@ -3,11 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/js/stats-page.js"></script>
-    <script src="/js/placeholder.js"></script>
+    <link rel="stylesheet" href="/assets/css/add-style.css">
+    <link rel="icon" type="image/x-icon" href="/assets/img/basketball-solid.svg">
+    <script src="/assets/js/script.js"></script>
+    <script type="module" src="/assets/js/placeholder.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css">
     <script>title();</script>
 </head>
 <body>
-    
+    <section class="section">
+        <div class="content" id="gen-stats">
+            <h1 class="title" id="name"></h1>
+            <p id="info"></p>
+        </div>
+        <div class="content">
+            <div class="columns" id="games">
+                <div class="column is-half" id="home">
+                    <div id="home-cards">
+
+                    </div>
+                </div>
+                <div class="column is-half" id="away">
+                    <div id="away-cards">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

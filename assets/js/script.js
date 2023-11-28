@@ -38,8 +38,8 @@ class Game {
     }
 }
 
-function getCountryData(country) {
-    return participants.find((country) => country.name === country);
+function getCountryData(countryPassed) {
+    return participants.find((country) => country.name === countryPassed);
 }
 
 function submitEntry(h,a,hs,as,d) {
@@ -106,6 +106,7 @@ function displayStats() {
         //AIHIGADHGHIADHGIAHIGIADHGIADHIGHADIGHIADHGIHAIGHIADGHIADGHADIG
 
         nameDOM.textContent = country.name;
+        nameDOM.setAttribute("href",`/stats.html?country=${country.name}`)
         let W = country.W
         let L = country.L
         WDOM.textContent = W;
@@ -219,7 +220,6 @@ function displayGames(country,dateRange,searchSelector) {
     if (valid) {
         let games = getAllGames(country.toUpperCase(),dateRange,searchSelector).length > 0 ? getAllGames(country.toUpperCase(),dateRange,searchSelector) : "Nothing found.";
         insert.innerHTML = "";
-        console.log(games);
         let i = 1;
         if (games instanceof Array) {
             for (const game of games) {
@@ -239,7 +239,10 @@ function displayGames(country,dateRange,searchSelector) {
 }
 
 document.addEventListener("DOMContentLoaded", (event) => { 
-    sortCall(document.querySelector("#three"))
+    if (window.location.pathname == "/index.html")
+        sortCall(document.querySelector("#three"))
+    else if (window.location.pathname == "/stats.html")
+        displayCountryInfoSP();
 });
 
 document.addEventListener("submit", (event) => {
@@ -249,3 +252,147 @@ document.addEventListener("submit", (event) => {
         console.log(event);
     }
 })
+
+/*
+*
+*
+*
+*
+*
+* FUNCTIONALITY FOR stats.html
+*
+*
+*
+*
+*
+*
+*/
+
+let hg = [];
+let ag = [];
+
+function title() {
+    document.title = `${getCountryParamSP() ? getCountryParamSP() : "UNKNOWN"} Statistics`;
+}
+
+function getCountryParamSP() {
+    return new URLSearchParams(window.location.search).get("country");
+}
+
+function displayCountryInfoSP() {
+    let country = getCountryData(getCountryParamSP());
+    console.log(country);
+    getGamesSP(country);
+
+    let name = document.querySelector("#name");
+    name.textContent = `Country information for ${country.name}`;
+
+    let info = document.querySelector("#info")
+    info.textContent = `${country.name} has ${country.W} wins and ${country.L} losses, with a win percentage of ${country.PCT}%.`
+}
+
+function getGamesSP(country) {
+    hg = [];
+    ag = [];
+    let i = 0;
+    let j = 0;
+    console.log(Object.keys(country.homeGames));
+    for (const key in country.homeGames) {
+        if (Object.hasOwnProperty.call(country.homeGames, key)) {
+            const game = country.homeGames[key];
+            hg.push(game);
+        }
+    }
+    for (const key in country.awayGames) {
+        if (Object.hasOwnProperty.call(country.awayGames, key)) {
+            const game = country.awayGames[key];
+            ag.push(game);
+        }
+    }
+    pagSetup()
+}
+
+/**
+ * Sets up pagination on stats.html.
+ */
+
+function pagSetup() {
+    let homePar = document.querySelector("#home")
+    let awayPar = document.querySelector("#away")
+
+    let maxPerPage = 5;
+    // home pagination
+    let numberPagesHome = Math.ceil(hg.length/maxPerPage);
+    let pageParentHome = document.createElement("nav");
+    pageParentHome.classList.add("pagination");
+    pageParentHome.classList.add("is-centered");
+    homePar.appendChild(pageParentHome);
+
+    let buttonsParentHome = document.createElement("ul");
+    pageParentHome.appendChild(buttonsParentHome);
+    buttonsParentHome.classList.add("pagination-list");
+    for (i=1; i<=numberPagesHome; i++) {
+        let buttonParent = document.createElement("li");
+        buttonsParentHome.append(buttonParent);
+
+        let button = document.createElement("a");
+        button.classList.add("pagination-link");
+        button.setAttribute("id",`p${i}`);
+        button.setAttribute("page",i);
+        button.setAttribute("aria-label",`Goto page ${i}`);
+        button.setAttribute("onclick",`pagDisplay('home',(document.querySelector(\"#p${i}\").getAttribute(\"page\")-1)*${maxPerPage},(document.querySelector(\"#p${i}\").getAttribute(\"page\")*${maxPerPage})-1)`)
+        button.textContent = i;
+        buttonParent.appendChild(button);
+    }
+    buttonsParentHome.querySelector("#p1").classList.add("is-current");
+
+    // away pagination
+    let numberPagesAway = Math.ceil(ag.length/maxPerPage);
+    let pageParentAway = document.createElement("nav");
+    pageParentAway.classList.add("pagination");
+    pageParentAway.classList.add("is-centered");
+    awayPar.appendChild(pageParentAway);
+
+    let buttonsParentAway = document.createElement("ul");
+    pageParentAway.appendChild(buttonsParentAway);
+    buttonsParentAway.classList.add("pagination-list");
+    for (i=1; i<=numberPagesAway; i++) {
+        let buttonParent = document.createElement("li");
+        buttonsParentAway.append(buttonParent);
+
+        let button = document.createElement("a");
+        button.classList.add("pagination-link");
+        button.setAttribute("id",`p${i}`);
+        button.setAttribute("page",i);
+        button.setAttribute("aria-label",`Goto page ${i}`);
+        button.setAttribute("onclick",`pagDisplay('away',(document.querySelector(\"#p${i}\").getAttribute(\"page\")-1)*${maxPerPage},(document.querySelector(\"#p${i}\").getAttribute(\"page\")*${maxPerPage})-1)`)
+        button.textContent = i;
+        buttonParent.appendChild(button);
+    }
+    buttonsParentAway.querySelector("#p1").classList.add("is-current");
+    
+    pagDisplay("home",0,maxPerPage-1)
+    pagDisplay("away",0,maxPerPage-1)
+}
+
+function pagDisplay(portion,start,end) {
+    if (portion === "home") {
+        let j = 1;
+        for (i = start; i < (end <= hg.length ? end : hg.length); i++) { // start at "start", continue until end OR the length of HG, whichever is smaller.
+            let game = hg[i];
+            let homePar = document.querySelector("#home-cards")
+            homePar.innerHTML = '';
+            homePar.innerHTML += `<div class='card'><div class='card-content'><div class='content'><b class='title is-4'>Home game ${j}</b><br><p>${game.home} vs ${game.away}</p><div class='columns'><div class='column is-one-third'><b>${game.home} score</b><br><p>${game.homeScore}</p></div><div class='column is-one-third'><b>${game.away} score</b><br><p>${game.awayScore}</p></div><div class='column is-one-third'><b>Date of game</b><br><p>${game.date}</p></div>`
+            j++;
+        }
+    } else if (portion === "away") {
+        let j = 1;
+        for (i = start; i < (end <= hg.length ? end : ag.length); i++) { // start at "start", continue until end OR the length of HG, whichever is smaller.
+            let game = ag[i];
+            let awayPar = document.querySelector("#away-cards")
+            awayPar.innerHTML = '';
+            awayPar.innerHTML += `<div class='card'><div class='card-content'><div class='content'><b class='title is-4'>Away game ${j}</b><br><p>${game.home} vs ${game.away}</p><div class='columns'><div class='column is-one-third'><b>${game.home} score</b><br><p>${game.homeScore}</p></div><div class='column is-one-third'><b>${game.away} score</b><br><p>${game.awayScore}</p></div><div class='column is-one-third'><b>Date of game</b><br><p>${game.date}</p></div>`
+            j++;
+        }
+    } else console.error("invalid pagDisplay portion (ie: not 'home' or 'away'). fix it!!")
+}
