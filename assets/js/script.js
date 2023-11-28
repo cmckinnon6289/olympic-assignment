@@ -340,40 +340,39 @@ function getGamesSP(country) {
     pagSetup() // setup pagination
 }
 
+let maxPerPage = 10; // maximum number of games per page
 /**
  * Sets up pagination on stats.html.
  */
-
 function pagSetup() {
     let homePar = document.querySelector("#home") // gets the "home" column div
     let awayPar = document.querySelector("#away") // gets the "away" column div
-    // blank space for formatting in the code viewer. gives the eyes a break from a huge chunk of code.
-    let maxPerPage = 5; // maximum number of games per page
+    
     // home pagination
     let numberPagesHome = Math.ceil(hg.length/maxPerPage); // calculates the number of pages in the pagination based on the number of games to be displayed divided by the maximum number of games per page. this number is rounded up to ensure all games can be displayed within the confines of the maximum number of games per page.
     let pageParentHome = document.createElement("nav"); // creates the pagination parent element for the home games column. this will contain all instances of pagination.
     pageParentHome.classList.add("pagination"); // adds the "pagination" class to the pagination parent element.
     pageParentHome.classList.add("is-centered"); // adds the "is-centered" class to the pagination parent element. this ensures that it is centered off with the "home" column div.
     homePar.appendChild(pageParentHome); // appends the pagination to the home column div.
-    // blank space for formatting in the code viewer. gives the eyes a break from a huge chunk of code.
+    
     let buttonsParentHome = document.createElement("ul"); // creates the parent for all the pagination buttons
     pageParentHome.appendChild(buttonsParentHome); // appends this button parent to the pagination parent element for the home games column.
     buttonsParentHome.classList.add("pagination-list"); // adds the "pagination-list" class to the button parent.
     for (i=1; i<=numberPagesHome; i++) { // create (numberPagesHome) buttons.
         let buttonParent = document.createElement("li"); // creates a new parent element for a pagination button.
         buttonsParentHome.append(buttonParent); // append that button to the button parent.
-        // blank space for formatting in the code viewer. gives the eyes a break from a huge chunk of code.
+        
         let button = document.createElement("a"); // creates a pagination button. 
         button.classList.add("pagination-link"); // adds the "pagination-link" class to the button.
         button.setAttribute("id",`p${i}`); // sets the id of the button to "p${i}", where i is the page number.
         button.setAttribute("page",i); // sets the "page" attribute of the button to i, where i is the page number. this is used later on for a function call.
         button.setAttribute("aria-label",`Goto page ${i}`); // this sets the Accessible Rich Internet Applications label to "Goto page ${i}", where i is the page number. this is used so that those who use screen readers can accurately understand what this button is for.
-        button.setAttribute("onclick",`pagDisplay('home',(document.querySelector(\"#p${i}\").getAttribute(\"page\")-1)*${maxPerPage},(document.querySelector(\"#p${i}\").getAttribute(\"page\")*${maxPerPage})-1)`) // sets the functionality of the button.
+        button.setAttribute("onclick",`pagDisplay('home',(document.querySelector(\"#p${i}\").getAttribute(\"page\")-1)*${maxPerPage},(document.querySelector(\"#p${i}\").getAttribute(\"page\")*${maxPerPage}))`) // sets the functionality of the button.
         button.textContent = i; // sets the text content to i, where i is the page number.
         buttonParent.appendChild(button); // appends the parent element for this pagination button to the parent for all buttons.
     } // closes the above loop.
     buttonsParentHome.querySelector("#p1").classList.add("is-current"); // makes the button for the first page the current page button by adding the "is-current" class to it.
-    // blank space for formatting in the code viewer. gives the eyes a break from a huge chunk of code.
+    
     // away pagination
     // ALL CODE SAME AS ABOVE BUT FOR AWAY GAMES. i rlly dont wanna do that again.
     let numberPagesAway = Math.ceil(ag.length/maxPerPage);
@@ -394,7 +393,7 @@ function pagSetup() {
         button.setAttribute("id",`p${i}`);
         button.setAttribute("page",i);
         button.setAttribute("aria-label",`Goto page ${i}`);
-        button.setAttribute("onclick",`pagDisplay('away',(document.querySelector(\"#p${i}\").getAttribute(\"page\")-1)*${maxPerPage},(document.querySelector(\"#p${i}\").getAttribute(\"page\")*${maxPerPage})-1)`)
+        button.setAttribute("onclick",`pagDisplay('away',(document.querySelector(\"#p${i}\").getAttribute(\"page\")-1)*${maxPerPage},(document.querySelector(\"#p${i}\").getAttribute(\"page\")*${maxPerPage}))`)
         button.textContent = i;
         buttonParent.appendChild(button);
     }
@@ -414,6 +413,7 @@ function pagDisplay(portion,start,end) {
             homePar.innerHTML += `<div class='card'><div class='card-content'><div class='content'><b class='title is-4'>Home game ${j}</b><br><p>${game.home} vs ${game.away}</p><div class='columns'><div class='column is-one-third'><b>${game.home} score</b><br><p>${game.homeScore}</p></div><div class='column is-one-third'><b>${game.away} score</b><br><p>${game.awayScore}</p></div><div class='column is-one-third'><b>Date of game</b><br><p>${game.date}</p></div>` // makes a new card with game information.
             j++; // increases the counter by 1.
         }
+        
     } else if (portion === "away") { // CODE BELOW IS SAME AS ABOVE BUT FOR HOME GAMES.
         let j = 1;
         let awayPar = document.querySelector("#away-cards")

@@ -9,5 +9,3 @@ function nameGen() {
 }
 
 document.addEventListener("DOMContentLoaded", (event) => { nameGen(); });
-
-// This is what Winning Looks Like
